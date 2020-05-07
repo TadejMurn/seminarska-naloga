@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.pill-nav a {
+  display: inline-block;
+  color: black;
+  text-align: center;
+  padding: 14px;
+  text-decoration: none;
+  font-size: 17px;
+  border-radius: 5px;
+}
+
+.pill-nav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.pill-nav a.active {
+  background-color: darkorange;
+  color: white;
+}
+    
+    .video {
+        position:relative;
+       width: 50%; 
+       height: auto;
+       margin:0 auto;
+            }
+    div {text-align: center}
+    p.koda {width: 150;height: 300px; overflow: scroll; text-align: left;}
+</style>
+</head>
+<body>
+
+<h2>Seminarska naloga</h2>
+
+<div class="pill-nav">
+  <a href="domov.html">Domov</a>
+  <a class="active" href="postopek.html">Postopek</a>
+</div>
+    <div>
+
+    <h1>Postopek</h1>
+        <p>moja koda:</p>
+          <p class="koda">import math
+import random<br>
+import pygame<br>
+import tkinter as tk<br>
+from tkinter import messagebox<br>
+pygame.font.init()<br>
+<br>
+class cube(object):<br>
+    rows = 20<br>
+    w = 500<br>
+    def __init__(self,start,dirnx=1,dirny=0,color=(255,255,255)):<br>
+        self.pos = start<br>
+        self.dirnx = 1<br>
+        self.dirny = 0<br>
+        self.color = color<br>
+<br>
+        
+    def move(self, dirnx, dirny):<br>
+        self.dirnx = dirnx<br>
+        self.dirny = dirny<br>
+        self.pos = (self.pos[0] + self.dirnx, self.pos[1] + self.dirny)<br>
+<br>
+    def draw(self, surface, eyes=False):<br>
+        dis = self.w // self.rows<br>
+        i = self.pos[0]<br>
+        j = self.pos[1]<br>
+
+        pygame.draw.rect(surface, self.color, (i*dis+1,j*dis+1, dis-2, dis-2))<br>
+        if eyes:<br>
+            centre = dis//2<br>
+            radius = 3<br>
+            circleMiddle = (i*dis+centre-radius,j*dis+8)<br>
+            circleMiddle2 = (i*dis + dis -radius*2, j*dis+8)<br>
+            pygame.draw.circle(surface, (0,0,0), circleMiddle, radius)<br>
+            pygame.draw.circle(surface, (0,0,0), circleMiddle2, radius)<br>
+        <br>
+<br>
+
+<br>
+class snake(object):<br>
+    body = []<br>
+    turns = {}<br>
+    def __init__(self, color, pos):<br>
+        self.color = color<br>
+        self.head = cube(pos)<br>
+        self.body.append(self.head)<br>
+        self.dirnx = 0<br>
+        self.dirny = 1<br>
+<br>
+    def move(self):<br>
+        for event in pygame.event.get():<br>
+            if event.type == pygame.QUIT:<br>
+                pygame.quit()<br>
+<br>
+            keys = pygame.key.get_pressed()<br>
+<br>
+            for key in keys:<br>
+                if keys[pygame.K_LEFT]:<br>
+                    self.dirnx = -1<br>
+                    self.dirny = 0<br>
+                    self.turns[self.head.pos[:]] = [self.dirnx, self.dirny]<br>
+<br>
+                elif keys[pygame.K_RIGHT]:<br>
+                    self.dirnx = 1<br>
+                    self.dirny = 0<br>
+                    self.turns[self.head.pos[:]] = [self.dirnx, self.dirny]<br>
+<br>
+                elif keys[pygame.K_UP]:<br>
+                    self.dirnx = 0<br>
+                    self.dirny = -1<br>
+                    self.turns[self.head.pos[:]] = [self.dirnx, self.dirny]<br>
+<br>
+                elif keys[pygame.K_DOWN]:<br>
+                    self.dirnx = 0<br>
+                    self.dirny = 1<br>
+                    self.turns[self.head.pos[:]] = [self.dirnx, self.dirny]<br>
+<br>
+        for i, c in enumerate(self.body):<br>
+            p = c.pos[:]<br>
+            if p in self.turns:<br>
+                turn = self.turns[p]<br>
+                c.move(turn[0],turn[1])<br>
+                if i == len(self.body)-1:<br>
+                    self.turns.pop(p)<br>
+            else:<br>
+                if c.dirnx == -1 and c.pos[0] <= 0: c.pos = (c.rows-1, c.pos[1])<br>
+                elif c.dirnx == 1 and c.pos[0] >= c.rows-1: c.pos = (0,c.pos[1])<br>
+                elif c.dirny == 1 and c.pos[1] >= c.rows-1: c.pos = (c.pos[0], 0)<br>
+                elif c.dirny == -1 and c.pos[1] <= 0: c.pos = (c.pos[0],c.rows-1)<br>
+                else: c.move(c.dirnx,c.dirny)<br>
+        <br>
+<br>
+    def reset(self, pos):<br>
+        self.head = cube(pos)<br>
+        self.body = []<br>
+        self.body.append(self.head)<br>
+        self.turns = {}<br>
+        self.dirnx = 0<br>
+        self.dirny = 1<br>
+<br>
+<br>
+    def addCube(self):<br>
+        score = 0<br>
+        tail = self.body[-1]<br>
+        dx, dy = tail.dirnx, tail.dirny<br>
+<br>
+        if dx == 1 and dy == 0:<br>
+            self.body.append(cube((tail.pos[0]-1,tail.pos[1])))<br>
+        elif dx == -1 and dy == 0:<br>
+            self.body.append(cube((tail.pos[0]+1,tail.pos[1])))<br>
+        elif dx == 0 and dy == 1:<br>
+            self.body.append(cube((tail.pos[0],tail.pos[1]-1)))<br>
+        elif dx == 0 and dy == -1:<br>
+            self.body.append(cube((tail.pos[0],tail.pos[1]+1)))<br>
+<br>
+        self.body[-1].dirnx = dx<br>
+        self.body[-1].dirny = dy<br>
+<br>
+        score = +1<br>
+        <br>
+<br>
+    def draw(self, surface):<br>
+        for i, c in enumerate(self.body):<br>
+            if i ==0:<br>
+                c.draw(surface, True)<br>
+            else:<br>
+                c.draw(surface)<br>
+<br>
+<br>
+def drawGrid(w, rows, surface):<br>
+    sizeBtwn = w // rows<br>
+<br>
+    x = 0<br>
+    y = 0<br>
+    for l in range(rows):<br>
+        x = x + sizeBtwn<br>
+<br>
+        y = y + sizeBtwn<br>
+<br>
+       <br>
+def redrawWindow(surface, score):<br>
+    global rows, width, s, snack<br>
+    pscore=score-1<br>
+    font=pygame.font.SysFont(None,45)<br>
+    scoreboard=font.render(str(pscore),True,(255,255,255))<br>
+    surface.fill((0,0,0))<br>
+    s.draw(surface)<br>
+    snack.draw(surface)<br>
+    drawGrid(width,rows, surface)<br>
+    surface.blit(scoreboard,(0,0))<br>
+    pygame.display.update()<br>
+<br>
+<br>
+def randomSnack(rows, item):<br>
+<br>
+    positions = item.body<br>
+<br>
+    while True:<br>
+        x = random.randrange(rows)<br>
+        y = random.randrange(rows)<br>
+        if len(list(filter(lambda z:z.pos == (x,y), positions))) > 0:<br>
+            continue<br>
+        else:<br>
+            break<br>
+       <br> 
+    return (x,y)<br>
+<br>
+def GameOver(surface, score):<br>
+    global rows, width, s, snack<br>
+    pscore=score-1<br>
+    font=pygame.font.SysFont(None,45)<br>
+    scoreboard=font.render(str(pscore),True,(255,255,255))<br>
+    gameoverFont=pygame.font.SysFont(None,110)<br>
+    GameOver=font.render("GAME OVER...",True,(255,0,0))<br>
+    surface.fill((0,0,0))<br>
+    s.draw(surface)<br>
+    snack.draw(surface)<br>
+    drawGrid(width,rows, surface)<br>
+    GameOver_rect = GameOver.get_rect(center=(250, 250))<br>
+    scoreboard_rect = scoreboard.get_rect(center=(250, 280))<br>
+    surface.blit(scoreboard,scoreboard_rect)<br>
+    surface.blit(GameOver,GameOver_rect)<br>
+    pygame.display.update()<br>
+<br>
+ <br>   
+<br>
+def message_box(subject, content):<br>
+    root = tk.Tk()<br>
+    root.attributes("-topmost", True)<br>
+    root.withdraw()<br>
+    messagebox.showinfo(subject, content)<br>
+    try:<br>
+        root.destroy()<br>
+    except:<br>
+        pass<br>
+<br>
+<br>
+def main():<br>
+    global width, rows, s, snack<br>
+    width = 500<br>
+    rows = 20<br>
+    win = pygame.display.set_mode((width, width))<br>
+    s = snake((255,255,255), (10,10))<br>
+    snack = cube(randomSnack(rows, s), color=(226,237,27))<br>
+    flag = True<br>
+<br>
+    clock = pygame.time.Clock()<br>
+   <br> 
+    while flag:<br>
+        pygame.time.delay(50)<br>
+        clock.tick(10)<br>
+        s.move()<br>
+        if s.body[0].pos == snack.pos:<br>
+            s.addCube()<br>
+            snack = cube(randomSnack(rows, s), color=(226,237,27))<br>
+<br>            
+        for x in range(len(s.body)):<br>
+            if s.body[x].pos in list(map(lambda z:z.pos,s.body[x+1:])):<br>
+                GameOver(win,len(s.body)) <br>   
+                print('Score: ', len(s.body))<br>
+                message_box('You Lost!', 'If you want to play again press OK')<br>
+                s.reset((10,10))<br>
+                break<br>
+<br>
+            <br>
+        redrawWindow(win,len(s.body))<br>
+<br>
+main()<br>
+
+</p> <br>
+            
+    </div>
+    <div> Video Totorial po katerem sem delal:<br></div>
+    <div class="video">
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/5tvER0MT14s" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><br>
+    </div>
+    <div>
+            <p>
+                Tega video totorial se nadaljuje do epizode 4. Vsaka epizoda traja priblizno 15 minut. V prvem delu naredis razrede ki jih bomo kasneje rabili, dodamo tudi FPS, velikost polja, uro, prigrizke...<br></p></div>
+                
+        
+        
+    <div class="video">
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/3RGeoVQfm7g" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    
+    
+    <div>
+    <p>
+        V drugem delu dodamo nasi kaci funkcijo premikanja, dolocimo zacetno mesto...
+        </p>
+    </div>
+    <div class="video">
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/_Uq4RXtMRiU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    <div>
+    <p>
+        V tretjem delu dodamo nakljucno pozicijo prigrizka in ji dodamo enacbo, katere naloga je da preveri kje je kaca in da se prigrizek ne prikaze na polju na katerem je kaca.
+        
+        </p>
+    </div>
+    <div class="video">
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/gXhvxf-1FBM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    <div>
+    <p>
+        V zadnjem delu dodamo kaci novo kocko vsakic ko poje prigrizek, in dodamo funkcijo ki preverja ce se je kaca zaletela vase. S to funkcijo dodamo se koncno sporocilo in "reset".<br>
+        Sam sem po teh video posnetkih zbrisal polja kajti menim da so moteca, spremenil barvo kace in prigrizka, dodal score, "game over" zaslon in spremenil koncno besedilo.
+        </p>
+    </div>
+</body>
+</html>
